@@ -16,7 +16,7 @@ import keras_resnet.blocks
 import keras_resnet.layers
 
 
-def ResNet(inputs, blocks, block, include_top=True, classes=1000, freeze_bn=True, numerical_names=None, *args, **kwargs):
+def ResNet(inputs, blocks, block, include_top=True, classes=1000, freeze_bn=True, numerical_names=None, resnet_features = 64, *args, **kwargs):
     """
     Constructs a `keras.models.Model` object using the given block count.
 
@@ -61,13 +61,14 @@ def ResNet(inputs, blocks, block, include_top=True, classes=1000, freeze_bn=True
     if numerical_names is None:
         numerical_names = [True] * len(blocks)
 
+    features = resnet_features
+
     x = keras.layers.ZeroPadding2D(padding=3, name="padding_conv1")(inputs)
-    x = keras.layers.Conv2D(64, (7, 7), strides=(2, 2), use_bias=False, name="conv1")(x)
+    x = keras.layers.Conv2D(features, (7, 7), strides=(2, 2), use_bias=False, name="conv1")(x)
     x = keras_resnet.layers.BatchNormalization(axis=axis, epsilon=1e-5, freeze=freeze_bn, name="bn_conv1")(x)
     x = keras.layers.Activation("relu", name="conv1_relu")(x)
     x = keras.layers.MaxPooling2D((3, 3), strides=(2, 2), padding="same", name="pool1")(x)
 
-    features = 64
 
     outputs = []
 
